@@ -1,10 +1,16 @@
 'use server';
 
 import { createHash } from 'crypto';
+import { headers } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { requireProfile } from '@/lib/auth';
+
+function requestIp() {
+  const forwardedFor = headers().get('x-forwarded-for');
+  return forwardedFor?.split(',')[0]?.trim() || null;
+}
 
 function patientFieldsFromForm(formData: FormData) {
   const field = (name: string) => String(formData.get(name) ?? '') || null;
@@ -55,6 +61,7 @@ export async function createPatient(formData: FormData) {
   const { error } = await supabase.from('patients').insert({
     ...patientFieldsFromForm(formData),
     created_by: profile.id,
+    clinic_id: profile.clinic_id,
   });
 
   if (error) {
@@ -105,6 +112,7 @@ export async function addMedicalRecord(patientId: string, formData: FormData) {
   }
 
   await supabase.from('medical_records').insert({
+    clinic_id: profile.clinic_id,
     patient_id: patientId,
     professional_id: profile.id,
     entry: String(formData.get('entry') ?? ''),
@@ -125,6 +133,7 @@ export async function addPrescription(patientId: string, formData: FormData) {
   const supabase = createSupabaseServerClient();
 
   await supabase.from('prescriptions').insert({
+    clinic_id: profile.clinic_id,
     patient_id: patientId,
     author_id: profile.id,
     title: String(formData.get('title') ?? ''),
@@ -147,6 +156,7 @@ export async function addTherapyPlan(patientId: string, formData: FormData) {
   const supabase = createSupabaseServerClient();
 
   await supabase.from('therapy_plans').insert({
+    clinic_id: profile.clinic_id,
     patient_id: patientId,
     professional_id: profile.id,
     area: String(formData.get('area') ?? '') || null,
@@ -160,7 +170,7 @@ export async function addTherapyPlan(patientId: string, formData: FormData) {
 }
 
 export async function addPatientDocument(patientId: string, formData: FormData) {
-  await requireProfile();
+  const profile = await requireProfile();
   const supabase = createSupabaseServerClient();
 
   let fileUrl: string | null = null;
@@ -176,6 +186,7 @@ export async function addPatientDocument(patientId: string, formData: FormData) 
   }
 
   await supabase.from('patient_documents').insert({
+    clinic_id: profile.clinic_id,
     patient_id: patientId,
     title: String(formData.get('title') ?? ''),
     description: String(formData.get('description') ?? '') || null,
@@ -218,7 +229,12 @@ export async function signMedicalRecord(
 
   await supabase
     .from('medical_records')
-    .update({ signed_at: signedAt, signature_data: signatureData, content_hash: contentHash })
+    .update({
+      signed_at: signedAt,
+      signature_data: signatureData,
+      content_hash: contentHash,
+      signer_ip: requestIp(),
+    })
     .eq('id', recordId);
 
   revalidatePath(`/dashboard/patients/${patientId}`);

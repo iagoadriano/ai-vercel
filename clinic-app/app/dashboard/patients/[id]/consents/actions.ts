@@ -1,16 +1,23 @@
 'use server';
 
 import { createHash } from 'crypto';
+import { headers } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { requireProfile } from '@/lib/auth';
+
+function requestIp() {
+  const forwardedFor = headers().get('x-forwarded-for');
+  return forwardedFor?.split(',')[0]?.trim() || null;
+}
 
 export async function createConsentForm(patientId: string, formData: FormData) {
   const profile = await requireProfile();
   const supabase = createSupabaseServerClient();
 
   const { error } = await supabase.from('consent_forms').insert({
+    clinic_id: profile.clinic_id,
     patient_id: patientId,
     title: String(formData.get('title') ?? ''),
     content: String(formData.get('content') ?? ''),
@@ -58,6 +65,7 @@ export async function signConsentForm(
       signer_name: signerName,
       signature_data: signatureData,
       content_hash: contentHash,
+      signer_ip: requestIp(),
     })
     .eq('id', consentId);
 
