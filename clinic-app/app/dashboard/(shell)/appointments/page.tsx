@@ -3,6 +3,8 @@ import { createSupabaseServerClient } from '@/lib/supabase/server';
 import type { Appointment, Patient, Profile, Room } from '@/lib/types';
 import { AppointmentStatusSelect } from '@/components/appointment-status-select';
 import { DeleteAppointmentButton } from '@/components/delete-appointment-button';
+import { PageHeader } from '@/components/ui/page-header';
+import { Card } from '@/components/ui/card';
 
 type AppointmentRow = Appointment & {
   patients: Pick<Patient, 'full_name'>;
@@ -42,31 +44,34 @@ export default async function AppointmentsPage({
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-gray-800">Agendamentos</h1>
-        <div className="flex gap-3">
-          <Link
-            href="/dashboard/appointments/week"
-            className="rounded border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
-          >
-            Semana
-          </Link>
-          <Link
-            href="/dashboard/appointments/calendar"
-            className="rounded border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
-          >
-            Calendário
-          </Link>
-          <Link
-            href="/dashboard/appointments/new"
-            className="rounded bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
-          >
-            + Novo agendamento
-          </Link>
-        </div>
-      </div>
+      <PageHeader
+        title="Agendamentos"
+        description="Consultas marcadas, filtros por data e profissional."
+        action={
+          <div className="flex gap-2">
+            <Link
+              href="/dashboard/appointments/week"
+              className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
+            >
+              Semana
+            </Link>
+            <Link
+              href="/dashboard/appointments/calendar"
+              className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
+            >
+              Calendário
+            </Link>
+            <Link
+              href="/dashboard/appointments/new"
+              className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
+            >
+              + Novo agendamento
+            </Link>
+          </div>
+        }
+      />
 
-      <form className="mb-4 flex gap-3" method="get">
+      <form className="mb-4 flex flex-wrap gap-3" method="get">
         <input
           type="date"
           name="date"
@@ -93,7 +98,7 @@ export default async function AppointmentsPage({
         </button>
       </form>
 
-      <div className="overflow-hidden rounded-xl bg-white shadow-sm">
+      <Card className="overflow-hidden">
         <table className="w-full text-sm">
           <thead className="bg-gray-50 text-left text-gray-500">
             <tr>
@@ -141,7 +146,7 @@ export default async function AppointmentsPage({
             )}
           </tbody>
         </table>
-      </div>
+      </Card>
     </div>
   );
 }

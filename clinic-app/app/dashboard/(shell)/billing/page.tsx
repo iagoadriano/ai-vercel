@@ -3,6 +3,8 @@ import { createSupabaseServerClient } from '@/lib/supabase/server';
 import type { Invoice, Patient, PaymentMethod } from '@/lib/types';
 import { MarkPaidButton } from '@/components/mark-paid-button';
 import { DeleteInvoiceButton } from '@/components/delete-invoice-button';
+import { PageHeader } from '@/components/ui/page-header';
+import { Card } from '@/components/ui/card';
 
 type InvoiceRow = Invoice & { patients: Pick<Patient, 'full_name'> };
 
@@ -35,25 +37,28 @@ export default async function BillingPage() {
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-gray-800">Financeiro</h1>
-        <div className="flex gap-3">
-          <Link
-            href="/dashboard/billing/reports"
-            className="rounded border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
-          >
-            Relatórios
-          </Link>
-          <Link
-            href="/dashboard/billing/new"
-            className="rounded bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
-          >
-            + Nova fatura
-          </Link>
-        </div>
-      </div>
+      <PageHeader
+        title="Financeiro"
+        description="Faturas, recebimentos e situação de pagamento dos pacientes."
+        action={
+          <div className="flex gap-2">
+            <Link
+              href="/dashboard/billing/reports"
+              className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
+            >
+              Relatórios
+            </Link>
+            <Link
+              href="/dashboard/billing/new"
+              className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
+            >
+              + Nova fatura
+            </Link>
+          </div>
+        }
+      />
 
-      <div className="overflow-hidden rounded-xl bg-white shadow-sm">
+      <Card className="overflow-hidden">
         <table className="w-full text-sm">
           <thead className="bg-gray-50 text-left text-gray-500">
             <tr>
@@ -112,7 +117,7 @@ export default async function BillingPage() {
             )}
           </tbody>
         </table>
-      </div>
+      </Card>
     </div>
   );
 }

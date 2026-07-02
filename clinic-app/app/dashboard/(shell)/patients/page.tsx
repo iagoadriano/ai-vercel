@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import type { Patient } from '@/lib/types';
 import { DeletePatientButton } from '@/components/delete-patient-button';
+import { PageHeader } from '@/components/ui/page-header';
+import { Card } from '@/components/ui/card';
 
 export default async function PatientsPage({
   searchParams,
@@ -19,28 +21,26 @@ export default async function PatientsPage({
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-800">Pacientes</h1>
-          <p className="text-sm text-gray-500">
-            {(patients ?? []).length} pacientes cadastrados
-          </p>
-        </div>
-        <div className="flex gap-3">
-          <Link
-            href="/dashboard/patients/import"
-            className="rounded border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
-          >
-            Importar CSV
-          </Link>
-          <Link
-            href="/dashboard/patients/new"
-            className="rounded bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
-          >
-            + Novo paciente
-          </Link>
-        </div>
-      </div>
+      <PageHeader
+        title="Pacientes"
+        description={`${(patients ?? []).length} paciente(s) cadastrado(s).`}
+        action={
+          <div className="flex gap-2">
+            <Link
+              href="/dashboard/patients/import"
+              className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
+            >
+              Importar CSV
+            </Link>
+            <Link
+              href="/dashboard/patients/new"
+              className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
+            >
+              + Novo paciente
+            </Link>
+          </div>
+        }
+      />
 
       <form className="mb-4" method="get">
         <input
@@ -48,11 +48,11 @@ export default async function PatientsPage({
           name="q"
           defaultValue={q}
           placeholder="Buscar por nome ou CPF..."
-          className="w-full max-w-sm rounded border border-gray-300 px-3 py-2 text-sm"
+          className="w-full max-w-sm rounded-lg border border-gray-300 px-3 py-2 text-sm"
         />
       </form>
 
-      <div className="overflow-hidden rounded-xl bg-white shadow-sm">
+      <Card className="overflow-hidden">
         <table className="w-full text-sm">
           <thead className="bg-gray-50 text-left text-gray-500">
             <tr>
@@ -110,7 +110,7 @@ export default async function PatientsPage({
             )}
           </tbody>
         </table>
-      </div>
+      </Card>
     </div>
   );
 }
