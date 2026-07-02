@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { MoreVertical, Ban, CheckCircle2, FileText, LogIn, ChevronDown } from 'lucide-react';
+import Link from 'next/link';
+import { MoreVertical, Ban, CheckCircle2, Eye, FileText, LogIn, ChevronDown } from 'lucide-react';
 import { InvoicesModal } from './invoices-modal';
 
 export type ClinicOverviewRow = {
@@ -156,6 +157,15 @@ export function ClinicsTable({
                         ref={menuRef}
                         className="absolute right-6 top-12 z-10 w-56 rounded-xl border border-white/10 bg-slate-800 py-1.5 shadow-xl"
                       >
+                        <Link
+                          href={`/super-admin/clinics/${row.clinic_id}`}
+                          onClick={() => setOpenMenuId(null)}
+                          className="flex w-full items-center gap-2.5 px-4 py-2 text-left text-sm text-slate-300 hover:bg-white/5"
+                        >
+                          <Eye className="h-4 w-4" />
+                          Ver detalhes
+                        </Link>
+
                         {isSuspendedOrInactive ? (
                           <form
                             action={async () => {
