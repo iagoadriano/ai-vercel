@@ -108,7 +108,11 @@ const LINKS: {
       { href: '/dashboard/reports/treatments', label: 'Tratamentos' },
     ],
   },
+  // 'Loja' is intentionally not a standard-tier tab — it's an opt-in
+  // differential enabled per clinic (clinics.extra_modules) from the
+  // Centro de Comando, not something every clinic sees by default.
   { href: '/dashboard/store', label: 'Loja', roles: ['admin', 'recepcao'], module: 'store' },
+  { href: '/dashboard/minha-agenda', label: 'Meus Atendimentos', roles: ['medico'] },
   { href: '/dashboard/schedule', label: 'Minha agenda', roles: ['admin', 'medico'] },
   { href: '/dashboard/profile', label: 'Meu perfil', roles: ['admin', 'medico', 'recepcao'] },
   { href: '/dashboard/admin', label: 'Administração', roles: ['admin'] },
@@ -121,7 +125,6 @@ export function Sidebar({
   planName,
   subscription,
   trialEndsAt,
-  isSuperAdmin,
 }: {
   role: UserRole;
   fullName: string;
@@ -129,24 +132,23 @@ export function Sidebar({
   planName: string | null;
   subscription: Subscription | null;
   trialEndsAt: string | null;
-  isSuperAdmin?: boolean;
 }) {
   const pathname = usePathname();
   const daysLeft = subscription?.status === 'trialing' ? trialDaysLeft(trialEndsAt) : null;
 
   return (
-    <aside className="flex h-screen w-60 flex-col justify-between bg-navy-900">
-      <div>
-        <div className="border-b border-white/10 px-4 py-5">
-          <p className="text-lg font-semibold text-white">Clinic Manager</p>
-          <p className="text-xs text-blue-200/70">{fullName}</p>
-          {planName && (
-            <span className="mt-1 inline-block rounded-full bg-white/10 px-2 py-0.5 text-xs text-blue-200/80">
-              {planName}
-              {daysLeft !== null && ` · trial ${daysLeft}d`}
-            </span>
-          )}
-        </div>
+    <aside className="flex h-screen w-60 min-w-60 flex-col bg-navy-900">
+      <div className="shrink-0 border-b border-white/10 px-4 py-5">
+        <p className="text-lg font-semibold text-white">Clinic Manager</p>
+        <p className="text-xs text-blue-200/70">{fullName}</p>
+        {planName && (
+          <span className="mt-1 inline-block rounded-full bg-white/10 px-2 py-0.5 text-xs text-blue-200/80">
+            {planName}
+            {daysLeft !== null && ` · trial ${daysLeft}d`}
+          </span>
+        )}
+      </div>
+      <div className="min-h-0 flex-1 overflow-y-auto">
         <nav className="flex flex-col gap-1 px-2 py-3">
           {LINKS.filter(
             (link) => link.roles.includes(role) && (!link.module || modules.includes(link.module)),
@@ -191,23 +193,7 @@ export function Sidebar({
           })}
         </nav>
       </div>
-      <div className="border-t border-white/10 px-2 py-4">
-        {role === 'admin' && (
-          <Link
-            href="/dashboard/admin/subscription"
-            className="mb-1 block rounded px-3 py-2 text-xs text-blue-200/60 hover:bg-white/5 hover:text-white"
-          >
-            Plano & Assinatura
-          </Link>
-        )}
-        {isSuperAdmin && (
-          <Link
-            href="/super-admin"
-            className="mb-1 flex items-center gap-1.5 rounded px-3 py-2 text-xs font-medium text-emerald-300/90 hover:bg-white/5 hover:text-emerald-200"
-          >
-            Centro de Comando
-          </Link>
-        )}
+      <div className="shrink-0 border-t border-white/10 px-2 py-4">
         <form action={logout}>
           <button
             type="submit"

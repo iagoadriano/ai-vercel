@@ -1,5 +1,11 @@
 export type UserRole = 'admin' | 'medico' | 'recepcao';
-export type AppointmentStatus = 'agendado' | 'confirmado' | 'cancelado' | 'concluido';
+export type AppointmentStatus =
+  | 'agendado'
+  | 'confirmado'
+  | 'in_progress'
+  | 'no_show'
+  | 'cancelado'
+  | 'concluido';
 export type InvoiceStatus = 'pendente' | 'pago' | 'cancelado';
 export type CampaignStatus = 'rascunho' | 'agendada' | 'enviada';
 export type LeadStage = 'novo' | 'contato' | 'agendado' | 'convertido' | 'perdido';
@@ -15,9 +21,22 @@ export interface Profile {
   role: UserRole;
   clinic_id: string | null;
   created_at: string;
+  email: string | null;
+  cpf: string | null;
+  council_registration: string | null;
+  specialty: string | null;
+  phone: string | null;
+  commission_rate: number;
+  is_locked?: boolean;
 }
 
-export type SubscriptionStatus = 'trialing' | 'active' | 'past_due' | 'suspended' | 'canceled';
+export type SubscriptionStatus =
+  | 'pending_payment'
+  | 'trialing'
+  | 'active'
+  | 'past_due'
+  | 'suspended'
+  | 'canceled';
 
 export interface Plan {
   id: string;
@@ -33,11 +52,14 @@ export interface Plan {
 export interface Clinic {
   id: string;
   name: string;
+  slug: string;
   legal_name: string | null;
   document_number: string | null;
   plan_id: string;
   owner_id: string | null;
   is_active: boolean;
+  onboarding_completed: boolean;
+  extra_modules: string[];
   trial_ends_at: string | null;
   created_at: string;
 }
@@ -53,6 +75,7 @@ export interface Subscription {
   grace_period_days: number;
   pending_plan_id: string | null;
   gateway_subscription_id: string | null;
+  billing_alert_message: string | null;
   updated_at: string;
 }
 
@@ -130,6 +153,15 @@ export interface TherapyPlan {
   created_at: string;
 }
 
+export interface MedicalRecordTemplate {
+  id: string;
+  clinic_id: string;
+  title: string;
+  content: string;
+  created_by: string | null;
+  created_at: string;
+}
+
 export interface Prescription {
   id: string;
   patient_id: string;
@@ -137,6 +169,23 @@ export interface Prescription {
   title: string;
   description: string | null;
   status: string;
+  created_at: string;
+  signed_at: string | null;
+  signature_data: string | null;
+  content_hash: string | null;
+  signer_ip: string | null;
+}
+
+export interface MedicalCertificate {
+  id: string;
+  patient_id: string;
+  professional_id: string;
+  content: string;
+  days_off: number | null;
+  signed_at: string | null;
+  signature_data: string | null;
+  content_hash: string | null;
+  signer_ip: string | null;
   created_at: string;
 }
 
@@ -265,6 +314,7 @@ export interface Appointment {
   notes: string | null;
   recurrence_series_id: string | null;
   recurrence_index: number | null;
+  whatsapp_reminder_sent_at: string | null;
   created_at: string;
 }
 
@@ -411,14 +461,29 @@ export type SignatureStatus = 'pendente' | 'assinado' | 'cancelado';
 
 export interface ClinicSettings {
   id: string;
+  clinic_id: string;
   clinic_name: string;
   cnpj: string | null;
   address: string | null;
   phone: string | null;
   email: string | null;
   logo_url: string | null;
+  letterhead_url: string | null;
   primary_color: string | null;
+  whatsapp_instance_url: string | null;
+  whatsapp_api_token: string | null;
   updated_at: string;
+}
+
+export interface AppointmentAttachment {
+  id: string;
+  clinic_id: string;
+  appointment_id: string;
+  patient_id: string;
+  professional_id: string;
+  file_url: string;
+  file_name: string;
+  created_at: string;
 }
 
 export interface DocumentSignature {

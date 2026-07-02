@@ -5,3 +5,8 @@
 body {
   background-color: #f4f6fb;
 }
+
+/* Respects the iOS home-indicator safe area on the patient portal bottom nav. */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}

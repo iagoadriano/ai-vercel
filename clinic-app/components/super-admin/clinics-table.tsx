@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { MoreVertical, Ban, CheckCircle2, FileText, LogIn, ChevronDown } from 'lucide-react';
+import Link from 'next/link';
+import { MoreVertical, Ban, CheckCircle2, Eye, FileText, LogIn, ChevronDown } from 'lucide-react';
 import { InvoicesModal } from './invoices-modal';
 
 export type ClinicOverviewRow = {
@@ -22,6 +23,7 @@ export type ClinicOverviewRow = {
 const STATUS_FILTERS = [
   { value: 'all', label: 'Todos os status' },
   { value: 'active', label: 'Ativa' },
+  { value: 'pending_payment', label: 'Aguardando pagamento' },
   { value: 'past_due_suspended', label: 'Inadimplente' },
   { value: 'trialing', label: 'Trial' },
   { value: 'canceled', label: 'Cancelada' },
@@ -29,6 +31,7 @@ const STATUS_FILTERS = [
 
 const STATUS_BADGE: Record<string, string> = {
   active: 'bg-emerald-500/10 text-emerald-400',
+  pending_payment: 'bg-purple-500/10 text-purple-400',
   trialing: 'bg-blue-500/10 text-blue-400',
   past_due: 'bg-amber-500/10 text-amber-400',
   suspended: 'bg-red-500/10 text-red-400',
@@ -37,6 +40,7 @@ const STATUS_BADGE: Record<string, string> = {
 
 const STATUS_LABEL: Record<string, string> = {
   active: 'Ativo',
+  pending_payment: 'Aguardando pagamento',
   trialing: 'Trial',
   past_due: 'Em atraso',
   suspended: 'Suspenso',
@@ -153,6 +157,15 @@ export function ClinicsTable({
                         ref={menuRef}
                         className="absolute right-6 top-12 z-10 w-56 rounded-xl border border-white/10 bg-slate-800 py-1.5 shadow-xl"
                       >
+                        <Link
+                          href={`/super-admin/clinics/${row.clinic_id}`}
+                          onClick={() => setOpenMenuId(null)}
+                          className="flex w-full items-center gap-2.5 px-4 py-2 text-left text-sm text-slate-300 hover:bg-white/5"
+                        >
+                          <Eye className="h-4 w-4" />
+                          Ver detalhes
+                        </Link>
+
                         {isSuspendedOrInactive ? (
                           <form
                             action={async () => {
