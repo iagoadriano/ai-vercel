@@ -194,14 +194,6 @@ export function Sidebar({
         </nav>
       </div>
       <div className="shrink-0 border-t border-white/10 px-2 py-4">
-        {role === 'admin' && (
-          <Link
-            href="/dashboard/admin/subscription"
-            className="mb-1 block rounded px-3 py-2 text-xs text-blue-200/60 hover:bg-white/5 hover:text-white"
-          >
-            Plano & Assinatura
-          </Link>
-        )}
         <form action={logout}>
           <button
             type="submit"

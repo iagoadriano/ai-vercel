@@ -27,19 +27,14 @@ export default async function PatientPortalPage({ params }: { params: { token: s
   ]);
 
   return (
-    <div className="mx-auto max-w-md">
-      <div className="bg-brand-600 px-4 pb-6 pt-8 text-white">
-        <p className="text-xs uppercase tracking-wide text-brand-100">Portal do paciente</p>
-        <h1 className="mt-1 text-xl font-semibold">Olá, {context.full_name.split(' ')[0]}</h1>
-      </div>
-      <PatientPortalTabs
-        token={params.token}
-        appointments={(appointments ?? []) as PortalAppointment[]}
-        prescriptions={(documentsData?.prescriptions ?? []) as PortalPrescription[]}
-        certificates={(documentsData?.certificates ?? []) as PortalCertificate[]}
-        documents={(documentsData?.documents ?? []) as PortalDocument[]}
-        invoices={(invoices ?? []) as PortalInvoice[]}
-      />
-    </div>
+    <PatientPortalTabs
+      token={params.token}
+      patientName={context.full_name}
+      appointments={(appointments ?? []) as PortalAppointment[]}
+      prescriptions={(documentsData?.prescriptions ?? []) as PortalPrescription[]}
+      certificates={(documentsData?.certificates ?? []) as PortalCertificate[]}
+      documents={(documentsData?.documents ?? []) as PortalDocument[]}
+      invoices={(invoices ?? []) as PortalInvoice[]}
+    />
   );
 }
